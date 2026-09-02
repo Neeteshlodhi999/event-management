@@ -1,0 +1,64 @@
+import { Schema, model } from "mongoose";
+
+const userSchema = new Schema({
+    name: {
+        type: String,
+        required: [true, "User Name is Required"],
+        trim: true,
+        maxLength: [32, "Name Is Too Long"],
+        minLength: [2, "Name is Too Short"],
+        validate: {
+            validator: function (v) {
+                return /^[a-zA-Z]+ [a-zA-Z]+$/.test(v)
+            },
+            message: props => `${props.value} is Not A valid Name`
+        }
+    },
+    email: {
+        type: String,
+        required: [true, "User Email is Required"],
+        trim: true,
+        validate: {
+            validator: function (v) {
+                return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v)
+            },
+            message: props => `${props.value} Is Not A valid Email`
+        },
+        unique: true
+    },
+    phone: {
+        type: String,
+        validate: {
+            validator: function (v) {
+                return /^[6-9]\d{9}$/.test(v);
+            },
+            message: props => `${props.value} is not a valid phone number!`
+        },
+        unique: true
+    },
+    password: {
+        type: String,
+        required: [true, "Password is Required"],
+    },
+    role: {
+        type: String,
+        enum: ["user", "admin"],
+        default: "user"
+    },
+    gender: {
+        type: String,
+        enum: ["male", "female", "other"]
+    },
+    image: {
+        type: String,
+        trim: true
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
+}, { timestamps: true });
+
+const userModel = model("user", userSchema);
+
+export default userModel;

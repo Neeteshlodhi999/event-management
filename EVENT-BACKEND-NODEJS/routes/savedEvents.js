@@ -1,0 +1,10 @@
+import { Router } from "express";
+import { getSavedEvents, removeSavedEvent, saveEvent } from "../controller/savedEventController.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
+import { roleMiddleware } from "../middleware/roleMiddleware.js";
+const router = Router();
+router.use(authMiddleware, roleMiddleware("user"));
+router.get("/", getSavedEvents);
+router.post("/", saveEvent);
+router.delete("/:eventId", removeSavedEvent);
+export default router;

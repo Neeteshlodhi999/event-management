@@ -1,0 +1,18 @@
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+export default function UserEvents() {
+  const [events, setEvents] = useState([]), [error, setError] = useState("");
+  const [search, setSearch] = useState(""), [category, setCategory] = useState("all"), [venue, setVenue] = useState(""), [date, setDate] = useState("");
+  useEffect(() => { fetch(`${API}/events?limit=100`).then(r => r.json()).then(j => j.status ? setEvents(j.data) : setError(j.message)).catch(() => setError("Cannot load events. Start the project server.")); }, []);
+  const categories = [...new Set(events.map(e => e.category).filter(Boolean))];
+  const visible = useMemo(() => events.filter(e => {
+    if (e.isCancel) return false;
+    const text = `${e.title} ${e.category} ${e.venue} ${e.desc}`.toLowerCase();
+    return text.includes(search.toLowerCase()) && (category === "all" || e.category === category) && e.venue.toLowerCase().includes(venue.toLowerCase()) && (!date || e.date === date);
+  }), [events, search, category, venue, date]);
+  const clear = () => { setSearch(""); setCategory("all"); setVenue(""); setDate(""); };
+  return <section className="pt-28 pb-20 px-6 text-white min-h-screen"><div className="max-w-7xl mx-auto"><h1 className="text-5xl font-black">Explore Events</h1><p className="text-slate-400 mt-3 mb-8">Find events by name, category, venue, or date.</p><div className="bg-white/5 border border-white/10 rounded-3xl p-5 grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"><label className="relative lg:col-span-2"><FaSearch className="absolute left-4 top-4 text-slate-500"/><input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search events..." className="w-full bg-slate-900 border border-white/10 rounded-xl py-3 pl-11 pr-4 outline-none"/></label><select value={category} onChange={e => setCategory(e.target.value)} className="bg-slate-900 border border-white/10 rounded-xl px-4 py-3"><option value="all">All categories</option>{categories.map(c => <option key={c}>{c}</option>)}</select><input value={venue} onChange={e => setVenue(e.target.value)} placeholder="Venue or city" className="bg-slate-900 border border-white/10 rounded-xl px-4 py-3"/><input value={date} onChange={e => setDate(e.target.value)} type="date" className="bg-slate-900 border border-white/10 rounded-xl px-4 py-3"/><button onClick={clear} className="border border-cyan-400 text-cyan-300 rounded-xl px-4 py-3">Clear filters</button><p className="lg:col-span-2 text-slate-400 self-center">{visible.length} event{visible.length === 1 ? "" : "s"} found</p></div>{error && <p className="text-red-400">{error}</p>}<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">{visible.map(e => <article key={e._id} className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden"><img src={e.thumbnail} alt={e.title} className="w-full h-48 object-cover"/><div className="p-6"><span className="text-cyan-300">{e.category}</span><h2 className="text-2xl font-bold mt-2">{e.title}</h2><p className="text-slate-400 mt-2">{e.date} · {e.time}</p><p className="text-slate-400">{e.venue}</p><Link to={`/events/details?id=${e._id}`} className="block text-center mt-5 bg-cyan-500 py-3 rounded-xl font-bold">View & Book</Link></div></article>)}</div>{!visible.length && !error && <div className="text-center py-14 text-slate-400">No events match these filters.<br/><button onClick={clear} className="text-cyan-400 mt-3">Clear filters</button></div>}</div></section>;
+}

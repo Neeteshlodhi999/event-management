@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #020617;
+    color: #ffffff;
+    overflow-x: hidden;
+}
+
+input,
+textarea,
+select {
+    color: #ffffff;
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gradient-text {
+    background: linear-gradient(to right, #38bdf8, #8b5cf6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.event-card {
+    transition: all 0.4s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-8px);
+}
+
+.hero-glow-1,
+.hero-glow-2 {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(90px);
+    z-index: 0;
+}
+
+.hero-glow-1 {
+    width: 300px;
+    height: 300px;
+    background: rgba(6, 182, 212, 0.18);
+    top: 80px;
+    left: -60px;
+}
+
+.hero-glow-2 {
+    width: 320px;
+    height: 320px;
+    background: rgba(139, 92, 246, 0.16);
+    bottom: -40px;
+    right: -80px;
+}
+
+.floating {
+    animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.pulse-ring {
+    animation: pulseRing 3s infinite;
+}
+
+@keyframes pulseRing {
+    0% {
+        transform: scale(1);
+        opacity: .6;
+    }
+
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
