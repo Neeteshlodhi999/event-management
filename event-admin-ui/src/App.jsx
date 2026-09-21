@@ -14,6 +14,7 @@ import TeamMembers from "./pages/TeamMembers";
 import AdminLogin from "./pages/AdminLogin";
 import Profile from "./pages/AdminProfile";
 import ContactMessages from "./pages/ContactMessages";
+import Subscribers from "./pages/Subscribers";
 import AdminProtectedRoute from "./routers/AdminProtectedRoute";
 
 
@@ -33,6 +34,7 @@ function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/contact-messages" element={<ContactMessages />} />
+        <Route path="/subscribers" element={<Subscribers />} />
       </Route>
       </Route>
       <Route path="/admin/login" element={<AdminLogin />} />

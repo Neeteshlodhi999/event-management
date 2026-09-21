@@ -9,6 +9,7 @@ import {
     FaBell,
     FaUser,
     FaEnvelope,
+    FaAddressBook,
     FaSignOutAlt
 } from "react-icons/fa";
 
@@ -54,6 +55,11 @@ const menus = [
         title: "Contact Messages",
         icon: <FaEnvelope />,
         path: "/contact-messages",
+    },
+    {
+        title: "Subscribers",
+        icon: <FaAddressBook />,
+        path: "/subscribers",
     },
     {
         title: "Profile",

@@ -6,6 +6,9 @@ export default function Contact() {
     const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
     const [status, setStatus] = useState({ message: '', error: false });
     const [sending, setSending] = useState(false);
+    const [subscriberEmail, setSubscriberEmail] = useState('');
+    const [subscribeStatus, setSubscribeStatus] = useState({ message: '', error: false });
+    const [subscribing, setSubscribing] = useState(false);
 
     async function sendMessage(event) {
         event.preventDefault();
@@ -25,6 +28,27 @@ export default function Contact() {
             setStatus({ message: error.message || 'Unable to send your message.', error: true });
         } finally {
             setSending(false);
+        }
+    }
+
+    async function subscribe(event) {
+        event.preventDefault();
+        setSubscribing(true);
+        setSubscribeStatus({ message: '', error: false });
+        try {
+            const response = await fetch(`${API_URL}/subscribers`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: subscriberEmail }),
+            });
+            const result = await response.json();
+            if (!response.ok || !result.status) throw new Error(result.message || 'Unable to subscribe.');
+            setSubscriberEmail('');
+            setSubscribeStatus({ message: result.message, error: false });
+        } catch (error) {
+            setSubscribeStatus({ message: error.message || 'Unable to subscribe.', error: true });
+        } finally {
+            setSubscribing(false);
         }
     }
 
@@ -291,19 +315,23 @@ export default function Contact() {
                             Subscribe to get updates about upcoming concerts, festivals,
                             workshops, and conferences.
                         </p>
-                        <div className="max-w-2xl mx-auto flex flex-col md:flex-row gap-4">
+                        <form onSubmit={subscribe} className="max-w-2xl mx-auto flex flex-col md:flex-row gap-4">
                             <div className="glass rounded-2xl h-14 px-5 flex items-center flex-1">
                                 <i className="fa-solid fa-envelope text-cyan-400" />
                                 <input
                                     type="email"
                                     placeholder="Enter your email"
+                                    required
+                                    value={subscriberEmail}
+                                    onChange={(event) => setSubscriberEmail(event.target.value)}
                                     className="bg-transparent w-full px-4 text-white placeholder-gray-500"
                                 />
                             </div>
-                            <button className="bg-cyan-500 hover:bg-cyan-400 transition px-8 h-14 rounded-2xl font-bold shadow-lg shadow-cyan-500/20">
-                                Subscribe
+                            <button disabled={subscribing} className="bg-cyan-500 hover:bg-cyan-400 disabled:opacity-60 transition px-8 h-14 rounded-2xl font-bold shadow-lg shadow-cyan-500/20">
+                                {subscribing ? 'Subscribing...' : 'Subscribe'}
                             </button>
-                        </div>
+                        </form>
+                        {subscribeStatus.message && <p className={subscribeStatus.error ? 'text-red-400 mt-4' : 'text-emerald-400 mt-4'}>{subscribeStatus.message}</p>}
                     </div>
                 </div>
             </section>
