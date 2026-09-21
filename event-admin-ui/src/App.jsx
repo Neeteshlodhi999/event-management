@@ -13,6 +13,7 @@ import Notifications from "./pages/LiveNotifications";
 import TeamMembers from "./pages/TeamMembers";
 import AdminLogin from "./pages/AdminLogin";
 import Profile from "./pages/AdminProfile";
+import ContactMessages from "./pages/ContactMessages";
 import AdminProtectedRoute from "./routers/AdminProtectedRoute";
 
 
@@ -31,6 +32,7 @@ function App() {
         <Route path="/team" element={<TeamMembers />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/contact-messages" element={<ContactMessages />} />
       </Route>
       </Route>
       <Route path="/admin/login" element={<AdminLogin />} />

@@ -8,6 +8,7 @@ import {
     FaCog,
     FaBell,
     FaUser,
+    FaEnvelope,
     FaSignOutAlt
 } from "react-icons/fa";
 
@@ -48,6 +49,11 @@ const menus = [
         title: "Notifications",
         icon: <FaBell />,
         path: "/notifications",
+    },
+    {
+        title: "Contact Messages",
+        icon: <FaEnvelope />,
+        path: "/contact-messages",
     },
     {
         title: "Profile",

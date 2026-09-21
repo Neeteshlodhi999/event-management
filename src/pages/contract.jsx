@@ -1,6 +1,33 @@
-import React from 'react'
+import React, { useState } from 'react'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function Contact() {
+    const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+    const [status, setStatus] = useState({ message: '', error: false });
+    const [sending, setSending] = useState(false);
+
+    async function sendMessage(event) {
+        event.preventDefault();
+        setSending(true);
+        setStatus({ message: '', error: false });
+        try {
+            const response = await fetch(`${API_URL}/contact-messages`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(form),
+            });
+            const result = await response.json();
+            if (!response.ok || !result.status) throw new Error(result.message || 'Unable to send your message.');
+            setForm({ name: '', email: '', subject: '', message: '' });
+            setStatus({ message: 'Thank you. Your message has been sent to EventHub.', error: false });
+        } catch (error) {
+            setStatus({ message: error.message || 'Unable to send your message.', error: true });
+        } finally {
+            setSending(false);
+        }
+    }
+
     return (
         <>
             {/* ================= HERO ================= */}
@@ -119,7 +146,7 @@ export default function Contact() {
                                 </p>
                             </div>
                             {/* Form */}
-                            <form className="space-y-6">
+                            <form className="space-y-6" onSubmit={sendMessage}>
                                 {/* Name */}
                                 <div>
                                     <label className="text-sm text-gray-300 block mb-3">
@@ -130,6 +157,9 @@ export default function Contact() {
                                         <input
                                             type="text"
                                             placeholder="Enter your full name"
+                                            required
+                                            value={form.name}
+                                            onChange={(event) => setForm({ ...form, name: event.target.value })}
                                             className="bg-transparent w-full px-4 text-white placeholder-gray-500"
                                         />
                                     </div>
@@ -144,6 +174,9 @@ export default function Contact() {
                                         <input
                                             type="email"
                                             placeholder="Enter your email"
+                                            required
+                                            value={form.email}
+                                            onChange={(event) => setForm({ ...form, email: event.target.value })}
                                             className="bg-transparent w-full px-4 text-white placeholder-gray-500"
                                         />
                                     </div>
@@ -158,6 +191,9 @@ export default function Contact() {
                                         <input
                                             type="text"
                                             placeholder="Enter subject"
+                                            required
+                                            value={form.subject}
+                                            onChange={(event) => setForm({ ...form, subject: event.target.value })}
                                             className="bg-transparent w-full px-4 text-white placeholder-gray-500"
                                         />
                                     </div>
@@ -171,15 +207,18 @@ export default function Contact() {
                                         <textarea
                                             rows={6}
                                             placeholder="Write your message..."
+                                            required
+                                            value={form.message}
+                                            onChange={(event) => setForm({ ...form, message: event.target.value })}
                                             className="bg-transparent w-full text-white placeholder-gray-500 resize-none"
-                                            defaultValue={""}
                                         />
                                     </div>
                                 </div>
                                 {/* Button */}
-                                <button className="w-full h-14 rounded-2xl bg-cyan-500 hover:bg-cyan-400 transition font-bold text-lg shadow-xl shadow-cyan-500/20">
-                                    Send Message
+                                <button disabled={sending} className="w-full h-14 rounded-2xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-60 transition font-bold text-lg shadow-xl shadow-cyan-500/20">
+                                    {sending ? 'Sending Message...' : 'Send Message'}
                                 </button>
+                                {status.message && <p className={status.error ? 'text-red-400 text-center' : 'text-emerald-400 text-center'}>{status.message}</p>}
                             </form>
                         </div>
                     </div>

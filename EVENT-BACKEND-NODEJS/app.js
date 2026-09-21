@@ -11,6 +11,7 @@ import eventRouter from "./routes/event.js"
 import bookingRouter from "./routes/booking.js"
 import savedEventsRouter from "./routes/savedEvents.js"
 import notificationsRouter from "./routes/notifications.js"
+import contactRouter from "./routes/contact.js"
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/events', eventRouter);
 app.use('/bookings', bookingRouter);
 app.use('/saved-events', savedEventsRouter);
 app.use('/notifications', notificationsRouter);
+app.use('/contact-messages', contactRouter);
 
 // for static image send
 app.use("/uploads",express.static('uploads'));
