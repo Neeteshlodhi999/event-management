@@ -1,6 +1,7 @@
 import eventModel from "../models/eventModel.js";
 import { ApiResponse } from "../utils/responsePattern.js";
 import fs from "fs";
+import { uploadImage } from "../config/cloudinary.js";
 
 export async function getEvents(req, res, next) {
     try {
@@ -81,12 +82,14 @@ export async function addEvent(req, res, next) {
         }
 
         if (!req.files?.thumbnail?.[0]) return res.status(400).json(new ApiResponse(false, null, "Event banner is required"));
-        const thumbnail = `${req.protocol}://${req.get("host")}/uploads/event-images/${req.files.thumbnail[0].filename}`
+        const thumbnail = await uploadImage(req.files.thumbnail[0], "eventhub/events")
+            || `${req.protocol}://${req.get("host")}/uploads/event-images/${req.files.thumbnail[0].filename}`;
 
         const images = [];
 
         for (let image of (req.files?.images || [])) {
-            let url = `${req.protocol}://${req.get("host")}/uploads/event-images/${image.filename}`;
+            let url = await uploadImage(image, "eventhub/events")
+                || `${req.protocol}://${req.get("host")}/uploads/event-images/${image.filename}`;
             images.push(url);
         }
 
@@ -129,7 +132,8 @@ export async function updateEvent(req, res, next) {
         const changes = Object.fromEntries(Object.entries(req.body).filter(([key, value]) => allowed.includes(key) && value !== undefined));
         if (typeof changes.highlights === "string") changes.highlights = JSON.parse(changes.highlights);
         if (req.files?.thumbnail?.[0]) {
-            changes.thumbnail = `${req.protocol}://${req.get("host")}/uploads/event-images/${req.files.thumbnail[0].filename}`;
+            changes.thumbnail = await uploadImage(req.files.thumbnail[0], "eventhub/events")
+                || `${req.protocol}://${req.get("host")}/uploads/event-images/${req.files.thumbnail[0].filename}`;
         }
         const event = await eventModel.findOneAndUpdate(
             { _id: req.params.eventId, adder: req.user._id }, changes,

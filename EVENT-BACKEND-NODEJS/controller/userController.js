@@ -1,6 +1,7 @@
 import userModel from "../models/userModel.js";
 import { ApiResponse } from "../utils/responsePattern.js";
 import { generateHash, verifyHash } from "../config/bcrypt.js"
+import { uploadImage } from "../config/cloudinary.js";
 
 export async function getUsers(req, res, next) {
     try {
@@ -135,7 +136,8 @@ export async function updateProfilePhoto(req, res) {
             return res.status(400).json(new ApiResponse(false, null, "Profile image is required"));
         }
 
-        const image = `${req.protocol}://${req.get("host")}/uploads/user-images/${req.file.filename}`;
+        const image = await uploadImage(req.file, "eventhub/profiles")
+            || `${req.protocol}://${req.get("host")}/uploads/user-images/${req.file.filename}`;
         const user = await userModel.findByIdAndUpdate(
             req.user._id,
             { image },
