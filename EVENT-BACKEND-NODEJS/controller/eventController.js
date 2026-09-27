@@ -1,4 +1,5 @@
 import eventModel from "../models/eventModel.js";
+import bookingModel from "../models/bookingModel.js";
 import { ApiResponse } from "../utils/responsePattern.js";
 import fs from "fs";
 import { uploadImage } from "../config/cloudinary.js";
@@ -131,16 +132,38 @@ export async function updateEvent(req, res, next) {
         const allowed = ["title", "desc", "total_general_tickets", "total_premium_tickets", "general_tickets_price", "premium_tickets_price", "date", "time", "venue", "category", "highlights", "organizer", "isCancel"];
         const changes = Object.fromEntries(Object.entries(req.body).filter(([key, value]) => allowed.includes(key) && value !== undefined));
         if (typeof changes.highlights === "string") changes.highlights = JSON.parse(changes.highlights);
+
+        const currentEvent = await eventModel.findOne({ _id: req.params.eventId, adder: req.user._id });
+        if (!currentEvent) return res.status(404).json(new ApiResponse(false, null, "Event Not Found"));
+
+        // Count active bookings as well as the live counters. This also keeps
+        // events created before ticket counters existed safe to edit.
+        const sales = await bookingModel.aggregate([
+            { $match: { event: currentEvent._id, isCancel: false } },
+            { $group: { _id: "$ticket_type", total: { $sum: "$booked_tickets" } } }
+        ]);
+        const activeSales = Object.fromEntries(sales.map((sale) => [sale._id, sale.total]));
+        const generalSold = Math.max(Number(currentEvent.sold_general_tickets || 0), Number(activeSales.general || 0));
+        const premiumSold = Math.max(Number(currentEvent.sold_premium_tickets || 0), Number(activeSales.premium || 0));
+
+        if (changes.total_general_tickets !== undefined && Number(changes.total_general_tickets) < generalSold) {
+            return res.status(400).json(new ApiResponse(false, null, `General ticket total cannot be lower than ${generalSold} tickets already sold`));
+        }
+        if (changes.total_premium_tickets !== undefined && Number(changes.total_premium_tickets) < premiumSold) {
+            return res.status(400).json(new ApiResponse(false, null, `Premium ticket total cannot be lower than ${premiumSold} tickets already sold`));
+        }
+
+        changes.sold_general_tickets = generalSold;
+        changes.sold_premium_tickets = premiumSold;
         if (req.files?.thumbnail?.[0]) {
             changes.thumbnail = await uploadImage(req.files.thumbnail[0], "eventhub/events")
                 || `${req.protocol}://${req.get("host")}/uploads/event-images/${req.files.thumbnail[0].filename}`;
         }
-        const event = await eventModel.findOneAndUpdate(
-            { _id: req.params.eventId, adder: req.user._id }, changes,
+        const event = await eventModel.findByIdAndUpdate(
+            currentEvent._id, changes,
             { new: true, runValidators: true }
         );
-        if (event) return res.status(200).json(new ApiResponse(true, event, "Event updated"));
-        return res.status(404).json(new ApiResponse(false, null, "Event Not Found"));
+        return res.status(200).json(new ApiResponse(true, event, "Event updated"));
 
     } catch (error) {
         res.status(500).json(new ApiResponse(false, null, error.message || "Internal server Error"))
