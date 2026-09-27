@@ -4,6 +4,20 @@ import { ApiResponse } from "../utils/responsePattern.js";
 import fs from "fs";
 import { uploadImage } from "../config/cloudinary.js";
 
+function hasEventEnded(event) {
+    const time = /^\d{2}:\d{2}$/.test(event.time || "") ? event.time : "23:59";
+    const endTime = new Date(`${event.date}T${time}:00+05:30`).getTime();
+    return Number.isFinite(endTime) && endTime < Date.now();
+}
+
+async function markExpiredEvents() {
+    const activeEvents = await eventModel.find({ isExpire: false }).select("_id date time");
+    const expiredIds = activeEvents.filter(hasEventEnded).map((event) => event._id);
+    if (expiredIds.length) {
+        await eventModel.updateMany({ _id: { $in: expiredIds } }, { $set: { isExpire: true } });
+    }
+}
+
 export async function getEvents(req, res, next) {
     try {
 
@@ -11,7 +25,9 @@ export async function getEvents(req, res, next) {
         let limit = req.query.limit <= 100 ? req.query.limit : 15;
         let skip = page === 1 ? 0 : (page - 1) * limit
 
-        let events = await eventModel.find()
+        await markExpiredEvents();
+
+        let events = await eventModel.find({ isExpire: false, isCancel: false })
             .skip(skip)
             .limit(limit);
 
@@ -28,6 +44,8 @@ export async function getMyEvents(req, res, next) {
         let page = req.query.page || 1;
         let limit = req.query.limit <= 100 ? req.query.limit : 15;
         let skip = page === 1 ? 0 : (page - 1) * limit
+
+        await markExpiredEvents();
 
         let events = await eventModel.find({adder : req.user._id})
             .skip(skip)
