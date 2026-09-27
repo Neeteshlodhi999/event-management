@@ -7,14 +7,15 @@ import { generateToken } from "../config/jwt.js";
 export async function authController(req, res) {
     try {
         const { email, password } = req.body;
+        const normalizedEmail = email?.trim().toLowerCase();
 
-        if (!email || !password) {
+        if (!normalizedEmail || !password) {
             return res.status(400).json(new ApiResponse(false, null, "Email and password are required"));
         }
 
-        let user = await userModel.findOne({ email });
+        let user = await userModel.findOne({ email: normalizedEmail });
 
-        if (!user) return res.status(404).json(new ApiResponse(false, null, "User Not Found"))
+        if (!user) return res.status(404).json(new ApiResponse(false, null, "No account found with this email. Please register first."))
 
         let match = await verifyHash(password, user.password);
 

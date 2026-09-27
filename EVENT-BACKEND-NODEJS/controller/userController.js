@@ -22,14 +22,20 @@ export async function getUsers(req, res, next) {
 export async function registerUser(req, res, next) {
     try {
         const { name, email, password } = req.body;
+        const normalizedEmail = email?.trim().toLowerCase();
 
-        if (!name || !email || !password) {
+        if (!name || !normalizedEmail || !password) {
             return res.status(400).json(new ApiResponse(false, null, "name , password and Email is required"));
+        }
+
+        const existingUser = await userModel.findOne({ email: normalizedEmail });
+        if (existingUser) {
+            return res.status(409).json(new ApiResponse(false, null, "An account with this email already exists. Please log in."));
         }
 
         let hash = await generateHash(password);
 
-        const newUser = await userModel.create({ name, email, password: hash });
+        const newUser = await userModel.create({ name: name.trim(), email: normalizedEmail, password: hash });
 
         return res.status(201).json(new ApiResponse(true, newUser, "success"))
 
@@ -113,14 +119,15 @@ export async function getMyProfile(req, res, next) {
 export async function updateMyProfile(req, res) {
     try {
         const { name, email, phone } = req.body;
+        const normalizedEmail = email?.trim().toLowerCase();
 
-        if (!name || !email) {
+        if (!name || !normalizedEmail) {
             return res.status(400).json(new ApiResponse(false, null, "Name and email are required"));
         }
 
         const user = await userModel.findByIdAndUpdate(
             req.user._id,
-            { name, email, phone: phone || undefined },
+            { name: name.trim(), email: normalizedEmail, phone: phone || undefined },
             { new: true, runValidators: true }
         ).select("-password -__v");
 
