@@ -1,5 +1,6 @@
 import eventModel from "../models/eventModel.js";
 import bookingModel from "../models/bookingModel.js";
+import notificationModel from "../models/notificationModel.js";
 import { ApiResponse } from "../utils/responsePattern.js";
 import fs from "fs";
 import { uploadImage } from "../config/cloudinary.js";
@@ -216,11 +217,30 @@ export async function cancelEvent(req, res, next) {
     try {
         const { eventId } = req.params;
 
-        const cancelEvent = await eventModel.findByIdAndUpdate(eventId, { isCancel: true }, { returnDocument: "after" });
+        const cancelEvent = await eventModel.findOneAndUpdate(
+            { _id: eventId, adder: req.user._id, isCancel: false },
+            { isCancel: true },
+            { new: true }
+        );
 
-        if (cancelEvent) return res.status(200).json(new ApiResponse(true, cancelEvent, "cencel success"))
+        if (cancelEvent) {
+            const bookings = await bookingModel.find({ event: eventId, isCancel: false }).select("attendee");
+            if (bookings.length) {
+                try {
+                    await notificationModel.insertMany(bookings.map((booking) => ({
+                        user: booking.attendee,
+                        title: "Event cancelled",
+                        message: `The event “${cancelEvent.title}” has been cancelled. Please contact the organizer for further support.`,
+                        type: "booking"
+                    })));
+                } catch (notificationError) {
+                    console.error("Event cancellation notifications failed:", notificationError.message);
+                }
+            }
+            return res.status(200).json(new ApiResponse(true, cancelEvent, "Event cancelled and attendees notified"));
+        }
 
-        return res.status(404).json(new ApiResponse(true, null, "Event Not Found"))
+        return res.status(404).json(new ApiResponse(false, null, "Event Not Found or already cancelled"))
 
     } catch (error) {
         res.status(500).json(new ApiResponse(false, null, error.message || "Internal server Error"))
