@@ -174,6 +174,15 @@ export async function deleteEvent(req, res, next) {
     try {
         const { eventId } = req.params;
 
+        const hasBookings = await bookingModel.exists({ event: eventId });
+        if (hasBookings) {
+            return res.status(400).json(new ApiResponse(
+                false,
+                null,
+                "This event has booking records and cannot be deleted. Cancel the event instead so users keep their ticket history."
+            ));
+        }
+
         const delEvent = await eventModel.findOneAndDelete({ _id: eventId, adder: req.user._id });
 
         if (delEvent) return res.status(200).json(new ApiResponse(true, delEvent, "deleted success"))
