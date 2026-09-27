@@ -188,7 +188,8 @@ export async function cancelBooking(req, res, next) {
 
 export async function checkInBooking(req, res) {
     try {
-        const { bookingId } = req.params;
+        const scannedValue = decodeURIComponent(req.params.bookingId || "");
+        const bookingId = scannedValue.match(/(?:^|\|)BOOKING:([^|]+)/)?.[1] || scannedValue;
         const booking = await bookingModel.findById(bookingId).populate("event", "title adder isCancel isExpire date time");
 
         if (!booking || !booking.event || String(booking.event.adder) !== String(req.user._id)) {
