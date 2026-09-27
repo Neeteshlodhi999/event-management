@@ -2,6 +2,8 @@ import userModel from "../models/userModel.js";
 import { ApiResponse } from "../utils/responsePattern.js";
 import { generateHash, verifyHash } from "../config/bcrypt.js"
 import { uploadImage } from "../config/cloudinary.js";
+import crypto from "crypto";
+import { sendPasswordResetEmail } from "../config/mailer.js";
 
 export async function getUsers(req, res, next) {
     try {
@@ -154,5 +156,57 @@ export async function updateProfilePhoto(req, res) {
         return res.status(200).json(new ApiResponse(true, user, "Profile photo updated"));
     } catch (error) {
         return res.status(500).json(new ApiResponse(false, null, error.message || "Internal server Error"));
+    }
+}
+
+export async function requestPasswordReset(req, res) {
+    try {
+        const email = req.body.email?.trim().toLowerCase();
+        // Always use the same response for unknown accounts to protect privacy.
+        if (!email) return res.status(200).json(new ApiResponse(true, null, "If an account exists, a reset link has been sent."));
+
+        const user = await userModel.findOne({ email }).select("+passwordResetToken +passwordResetExpires");
+        if (!user) return res.status(200).json(new ApiResponse(true, null, "If an account exists, a reset link has been sent."));
+
+        const rawToken = crypto.randomBytes(32).toString("hex");
+        user.passwordResetToken = crypto.createHash("sha256").update(rawToken).digest("hex");
+        user.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000);
+        await user.save({ validateBeforeSave: false });
+
+        const appUrl = (process.env.CLIENT_URL || "https://event-management-user-qfum.onrender.com").replace(/\/$/, "");
+        try {
+            await sendPasswordResetEmail({ to: user.email, resetUrl: `${appUrl}/reset-password?token=${rawToken}` });
+        } catch (emailError) {
+            user.passwordResetToken = undefined;
+            user.passwordResetExpires = undefined;
+            await user.save({ validateBeforeSave: false });
+            throw emailError;
+        }
+
+        return res.status(200).json(new ApiResponse(true, null, "If an account exists, a reset link has been sent."));
+    } catch (error) {
+        return res.status(503).json(new ApiResponse(false, null, error.message || "Unable to send reset email"));
+    }
+}
+
+export async function resetPassword(req, res) {
+    try {
+        const { token } = req.params;
+        const { password } = req.body;
+        if (!password || password.length < 6) {
+            return res.status(400).json(new ApiResponse(false, null, "New password must be at least 6 characters"));
+        }
+
+        const passwordResetToken = crypto.createHash("sha256").update(token).digest("hex");
+        const user = await userModel.findOne({ passwordResetToken, passwordResetExpires: { $gt: new Date() } }).select("+passwordResetToken +passwordResetExpires");
+        if (!user) return res.status(400).json(new ApiResponse(false, null, "This reset link is invalid or has expired"));
+
+        user.password = await generateHash(password);
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
+        await user.save();
+        return res.status(200).json(new ApiResponse(true, null, "Password reset successfully. You can now log in."));
+    } catch (error) {
+        return res.status(500).json(new ApiResponse(false, null, error.message || "Unable to reset password"));
     }
 }

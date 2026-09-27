@@ -12,6 +12,8 @@ import NotFoundPage from './pages/error 404';
 import Auth from './pages/auth';
 import EventDetailsPage from './pages/UserEventDetailsLive';
 import GalleryPage from './pages/photogallery';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 // dashboard pages
 import Dashboard from './pages/dashboard/userdash';
@@ -38,6 +40,8 @@ export default function App() {
         <Route path='photo-gallery' element={<GalleryPage />} />
         <Route path='contact' element={<Contact />} />
         <Route path='auth' element={<Auth />} />
+        <Route path='forgot-password' element={<ForgotPassword />} />
+        <Route path='reset-password' element={<ResetPassword />} />
         <Route path='*' element={<NotFoundPage />} />
       </Route>
 

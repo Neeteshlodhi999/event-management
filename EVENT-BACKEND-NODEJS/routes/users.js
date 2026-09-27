@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import { 
   deleteUser, 
   getUsers, 
@@ -7,7 +8,9 @@ import {
   changePassword,
   getMyProfile,
   updateMyProfile,
-  updateProfilePhoto
+  updateProfilePhoto,
+  requestPasswordReset,
+  resetPassword
 } from '../controller/userController.js';
 
 import { authMiddleware } from '../middleware/authMiddleware.js';
@@ -15,6 +18,13 @@ import { roleMiddleware } from '../middleware/roleMiddleware.js';
 import { userImageUpload } from '../config/multer.js';
 
 const router = Router();
+const passwordResetLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: { status: false, data: null, message: "Too many password reset attempts. Please wait 15 minutes and try again." }
+});
 
 /* GET all users (admin only) */
 router.get('/', authMiddleware, roleMiddleware("admin"), getUsers);
@@ -26,6 +36,8 @@ router.patch('/profile/photo', authMiddleware, roleMiddleware("admin", "user"), 
 
 /* REGISTER user */
 router.post('/', registerUser);
+router.post('/forgot-password', passwordResetLimiter, requestPasswordReset);
+router.post('/reset-password/:token', passwordResetLimiter, resetPassword);
 
 /* UPDATE user */
 router.patch('/:userId', updateUser);

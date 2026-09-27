@@ -39,6 +39,14 @@ const userSchema = new Schema({
         type: String,
         required: [true, "Password is Required"],
     },
+    passwordResetToken: {
+        type: String,
+        select: false
+    },
+    passwordResetExpires: {
+        type: Date,
+        select: false
+    },
     role: {
         type: String,
         enum: ["user", "admin"],

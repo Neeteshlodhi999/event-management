@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -183,9 +183,9 @@ function Login({ navigate }) {
                             <input type="checkbox" className="accent-cyan-500" />
                             Remember Me
                         </label>
-                        <a href="#" className="text-cyan-400 hover:text-cyan-300">
+                        <Link to="/forgot-password" className="text-cyan-400 hover:text-cyan-300">
                             Forgot Password?
-                        </a>
+                        </Link>
                     </div>
                     {error && <p className="text-sm text-red-400">{error}</p>}
                     {/* Login Button */}
