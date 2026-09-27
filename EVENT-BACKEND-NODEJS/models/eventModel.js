@@ -34,6 +34,16 @@ const eventSchema = new Schema({
             message: props => `${props.value} is not a valid Number!`
         }
     },
+    sold_general_tickets: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
+    sold_premium_tickets: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
     general_tickets_price: {
         type: Number,
         required: [true, "general tickets price is Required"],
