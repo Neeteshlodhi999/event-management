@@ -56,6 +56,14 @@ const bookingSchema = new Schema({
     isBooked: {
         type: Boolean,
         default: true
+    },
+    isCheckedIn: {
+        type: Boolean,
+        default: false
+    },
+    checkedInAt: {
+        type: Date,
+        default: null
     }
 }, { timestamps: true });
 

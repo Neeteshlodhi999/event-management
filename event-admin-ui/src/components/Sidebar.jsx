@@ -10,6 +10,7 @@ import {
     FaUser,
     FaEnvelope,
     FaAddressBook,
+    FaQrcode,
     FaSignOutAlt
 } from "react-icons/fa";
 
@@ -35,6 +36,11 @@ const menus = [
         title: "Attendees",
         icon: <FaUsers />,
         path: "/attendees",
+    },
+    {
+        title: "Check-in",
+        icon: <FaQrcode />,
+        path: "/check-in",
     },
     {
         title: "Revenue",

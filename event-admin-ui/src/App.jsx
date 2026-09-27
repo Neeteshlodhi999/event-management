@@ -15,6 +15,7 @@ import AdminLogin from "./pages/AdminLogin";
 import Profile from "./pages/AdminProfile";
 import ContactMessages from "./pages/ContactMessages";
 import Subscribers from "./pages/Subscribers";
+import CheckIn from "./pages/CheckIn";
 import AdminProtectedRoute from "./routers/AdminProtectedRoute";
 
 
@@ -35,6 +36,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/contact-messages" element={<ContactMessages />} />
         <Route path="/subscribers" element={<Subscribers />} />
+        <Route path="/check-in" element={<CheckIn />} />
       </Route>
       </Route>
       <Route path="/admin/login" element={<AdminLogin />} />

@@ -185,3 +185,33 @@ export async function cancelBooking(req, res, next) {
         res.status(500).json(new ApiResponse(false, null, error.message || "Internal server Error"))
     }
 }
+
+export async function checkInBooking(req, res) {
+    try {
+        const { bookingId } = req.params;
+        const booking = await bookingModel.findById(bookingId).populate("event", "title adder isCancel isExpire date time");
+
+        if (!booking || !booking.event || String(booking.event.adder) !== String(req.user._id)) {
+            return res.status(404).json(new ApiResponse(false, null, "Booking not found for your events"));
+        }
+        if (booking.isCancel || booking.event.isCancel || booking.event.isExpire) {
+            return res.status(400).json(new ApiResponse(false, null, "This ticket is cancelled or the event is no longer active"));
+        }
+        if (booking.isCheckedIn) {
+            return res.status(409).json(new ApiResponse(false, booking, "This ticket was already checked in"));
+        }
+
+        const checkedInBooking = await bookingModel.findOneAndUpdate(
+            { _id: bookingId, event: booking.event._id, isCancel: false, isCheckedIn: false },
+            { $set: { isCheckedIn: true, checkedInAt: new Date() } },
+            { new: true }
+        ).populate("attendee", "name email phone image").populate("event", "title date time venue");
+
+        if (!checkedInBooking) {
+            return res.status(409).json(new ApiResponse(false, null, "This ticket was already checked in"));
+        }
+        return res.status(200).json(new ApiResponse(true, checkedInBooking, "Ticket checked in successfully"));
+    } catch (error) {
+        return res.status(400).json(new ApiResponse(false, null, "Enter a valid booking ID"));
+    }
+}
