@@ -4,7 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function Auth() {
-    const [loginPage, setLoginPage] = useState(true);
+    // New visitors need an account first, so registration is the default tab.
+    const [loginPage, setLoginPage] = useState(false);
     const navigate = useNavigate();
     return (
         <>
