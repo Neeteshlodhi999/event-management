@@ -134,7 +134,7 @@ const Dashboard = ({ children }) => {
                             <div>
 
                                 <h2 className="text-3xl font-black">
-                                    Welcome Back 👋
+                                    Welcome back{user.name ? `, ${user.name}` : ''} 👋
                                 </h2>
 
                                 <p className="text-slate-400 mt-1">
