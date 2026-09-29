@@ -98,7 +98,7 @@ const eventSchema = new Schema({
         minLength: [3, "name is Too Short"],
         validate: {
             validator: function (v) {
-                return /^[a-zA-Z]+ [a-zA-Z]+$/.test(v)
+                return /^[a-zA-Z]+(?: [a-zA-Z]+)*$/.test(v)
             },
             message: props => `${props.value} is Not A valid Name`
         }
