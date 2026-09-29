@@ -150,11 +150,9 @@ const Dashboard = ({ children }) => {
                                 <FaBell />
                             </button>
 
-                            <img
-                                src={user.image || "https://i.pravatar.cc/150?img=32"}
-                                alt=""
-                                className="w-12 h-12 rounded-full"
-                            />
+                            {user.image
+                                ? <img src={user.image} alt="Profile" className="w-12 h-12 rounded-full object-cover" />
+                                : <div className="w-12 h-12 rounded-full bg-slate-900 border border-white/10 text-cyan-400 flex items-center justify-center"><FaUser /></div>}
 
                         </div>
 

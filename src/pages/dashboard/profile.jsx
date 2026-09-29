@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { FaUser } from 'react-icons/fa';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -81,7 +82,9 @@ export default function Profile() {
                 <form className="space-y-5" onSubmit={saveProfile}>
 
                     <div className="flex flex-col sm:flex-row items-center gap-5">
-                        <img src={preview || 'https://i.pravatar.cc/150?img=32'} alt="Profile" className="w-24 h-24 rounded-full object-cover border-2 border-cyan-400" />
+                        {preview
+                            ? <img src={preview} alt="Profile" className="w-24 h-24 rounded-full object-cover border-2 border-cyan-400" />
+                            : <div className="w-24 h-24 rounded-full border-2 border-cyan-400 bg-slate-900 flex items-center justify-center text-cyan-400 text-3xl"><FaUser /></div>}
                         <div>
                             <label className="inline-block cursor-pointer bg-slate-900 border border-white/10 hover:border-cyan-400 transition rounded-xl px-5 py-3 font-semibold">
                                 Choose profile photo
