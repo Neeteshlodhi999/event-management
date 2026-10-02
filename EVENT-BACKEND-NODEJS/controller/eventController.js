@@ -5,15 +5,34 @@ import { ApiResponse } from "../utils/responsePattern.js";
 import fs from "fs";
 import { uploadImage } from "../config/cloudinary.js";
 
-function hasEventEnded(event) {
-    const time = /^\d{2}:\d{2}$/.test(event.time || "") ? event.time : "23:59";
-    const endTime = new Date(`${event.date}T${time}:00+05:30`).getTime();
-    return Number.isFinite(endTime) && endTime < Date.now();
+function todayInIndia() {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).formatToParts(new Date());
+    const value = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+    return `${value.year}-${value.month}-${value.day}`;
+}
+
+function hasEventEnded(event, today) {
+    return /^\d{4}-\d{2}-\d{2}$/.test(event.date || "") && event.date < today;
 }
 
 async function markExpiredEvents() {
+    const today = todayInIndia();
+
+    // A single start time is not enough to decide that an event has finished.
+    // Keep it visible for its whole calendar date so a newly created event
+    // appears on the public site immediately.
+    await eventModel.updateMany(
+        { isExpire: true, date: { $gte: today } },
+        { $set: { isExpire: false } }
+    );
+
     const activeEvents = await eventModel.find({ isExpire: false }).select("_id date time");
-    const expiredIds = activeEvents.filter(hasEventEnded).map((event) => event._id);
+    const expiredIds = activeEvents.filter((event) => hasEventEnded(event, today)).map((event) => event._id);
     if (expiredIds.length) {
         await eventModel.updateMany({ _id: { $in: expiredIds } }, { $set: { isExpire: true } });
     }
