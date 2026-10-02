@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -102,6 +102,7 @@ function Login({ navigate }) {
     const [form, setForm] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -168,14 +169,23 @@ function Login({ navigate }) {
                         <div className="glass rounded-2xl flex items-center px-5 h-14">
                             <i className="fa-solid fa-lock text-cyan-400" />
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 placeholder="Enter your password"
                                 value={form.password}
                                 onChange={(event) => setForm({ ...form, password: event.target.value })}
                                 required
+                                autoComplete="current-password"
                                 className="bg-transparent w-full px-4 text-white placeholder-gray-500 focus:outline-0"
                             />
-                            <i className="fa-solid fa-eye text-gray-500 cursor-pointer" />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword((visible) => !visible)}
+                                aria-label={showPassword ? "Hide password" : "Show password"}
+                                aria-pressed={showPassword}
+                                className="shrink-0 text-gray-500 hover:text-cyan-400 transition p-1"
+                            >
+                                <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`} aria-hidden="true" />
+                            </button>
                         </div>
                     </div>
                     {/* Options */}
@@ -221,6 +231,7 @@ function Register({ onRegistered }) {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -301,14 +312,23 @@ function Register({ onRegistered }) {
                         <div className="glass rounded-2xl flex items-center px-5 h-14">
                             <i className="fa-solid fa-lock text-cyan-400" />
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 placeholder="Enter your password"
                                 value={form.password}
                                 onChange={(event) => setForm({ ...form, password: event.target.value })}
                                 required
+                                autoComplete="new-password"
                                 className="bg-transparent w-full px-4 text-white placeholder-gray-500 focus:outline-0"
                             />
-                            <i className="fa-solid fa-eye text-gray-500 cursor-pointer" />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword((visible) => !visible)}
+                                aria-label={showPassword ? "Hide password" : "Show password"}
+                                aria-pressed={showPassword}
+                                className="shrink-0 text-gray-500 hover:text-cyan-400 transition p-1"
+                            >
+                                <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`} aria-hidden="true" />
+                            </button>
                         </div>
                     </div>
                     {error && <p className="text-sm text-red-400">{error}</p>}
