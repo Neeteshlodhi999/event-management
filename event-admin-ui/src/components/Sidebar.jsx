@@ -38,6 +38,11 @@ const menus = [
         path: "/attendees",
     },
     {
+        title: "Accounts",
+        icon: <FaAddressBook />,
+        path: "/team",
+    },
+    {
         title: "Check-in",
         icon: <FaQrcode />,
         path: "/check-in",

@@ -12,7 +12,10 @@ export async function getUsers(req, res, next) {
         let limit = req.query.limit <= 100 ? req.query.limit : 25;
         let skip = page === 1 ? 0 : (page - 1) * limit
 
-        let users = await userModel.find().skip(skip).limit(limit);
+        let users = await userModel.find({ isDeleted: { $ne: true } })
+            .select("-password -passwordResetToken -passwordResetExpires -__v")
+            .skip(skip)
+            .limit(limit);
 
         return res.status(200).json(new ApiResponse(true, users, "success"))
 
@@ -39,7 +42,10 @@ export async function registerUser(req, res, next) {
 
         const newUser = await userModel.create({ name: name.trim(), email: normalizedEmail, password: hash });
 
-        return res.status(201).json(new ApiResponse(true, newUser, "success"))
+        const safeUser = newUser.toObject();
+        delete safeUser.password;
+        delete safeUser.__v;
+        return res.status(201).json(new ApiResponse(true, safeUser, "success"))
 
     } catch (error) {
         res.status(500).json(new ApiResponse(false, null, error.message || "Internal server Error"))
@@ -55,7 +61,11 @@ export async function updateUser(req, res, next) {
             return res.status(400).json(new ApiResponse(false, null, "name , gender and phone is required"));
         }
 
-        const upUser = await userModel.findByIdAndUpdate(userId, { name, gender, phone }, { returnDocument: "after", runValidators: true });
+        const upUser = await userModel.findByIdAndUpdate(
+            userId,
+            { name, gender, phone },
+            { returnDocument: "after", runValidators: true }
+        ).select("-password -passwordResetToken -passwordResetExpires -__v");
 
 
         if (upUser) return res.status(200).json(new ApiResponse(true, upUser, "success"))
@@ -71,7 +81,8 @@ export async function deleteUser(req, res, next) {
     try {
         const { userId } = req.params;
 
-        const delUser = await userModel.findByIdAndDelete(userId, { returnDocument: "after" });
+        const delUser = await userModel.findByIdAndDelete(userId)
+            .select("-password -passwordResetToken -passwordResetExpires -__v");
 
         if (delUser) return res.status(200).json(new ApiResponse(true, delUser, "deleted success"))
 
@@ -97,9 +108,9 @@ export async function changePassword(req, res, next) {
 
         let hash = await generateHash(newPassword);
 
-        const updatePass = await userModel.findByIdAndUpdate(req.user._id, { password: hash });
+        await userModel.findByIdAndUpdate(req.user._id, { password: hash });
 
-        return res.status(201).json(new ApiResponse(true, updatePass, "password changed success"))
+        return res.status(200).json(new ApiResponse(true, null, "password changed success"))
 
     } catch (error) {
         res.status(500).json(new ApiResponse(false, null, error.message || "Internal server Error"))

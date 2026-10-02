@@ -40,10 +40,10 @@ router.post('/forgot-password', passwordResetLimiter, requestPasswordReset);
 router.post('/reset-password/:token', passwordResetLimiter, resetPassword);
 
 /* UPDATE user */
-router.patch('/:userId', updateUser);
+router.patch('/:userId', authMiddleware, roleMiddleware("admin"), updateUser);
 
 /* DELETE user */
-router.delete('/:userId', deleteUser);
+router.delete('/:userId', authMiddleware, roleMiddleware("admin"), deleteUser);
 
 /* CHANGE PASSWORD (admin + user) */
 router.post('/change-password', authMiddleware, roleMiddleware("admin", "user"), changePassword);

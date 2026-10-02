@@ -1,13 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
 import {
     FaEnvelope,
     FaLock,
     FaEye,
     FaEyeSlash,
     FaCalendarAlt,
-    FaGoogle,
-    FaGithub,
 } from "react-icons/fa";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -130,24 +128,10 @@ const AdminLogin = () => {
                             </div>
                         </div>
 
-                        {/* Remember */}
-
-                        <div className="flex items-center justify-between">
-                            <label className="flex items-center gap-3 text-sm text-slate-400">
-                                <input
-                                    type="checkbox"
-                                    className="w-4 h-4 accent-cyan-500"
-                                />
-
-                                Remember Me
-                            </label>
-
-                            <button
-                                type="button"
-                                className="text-cyan-400 hover:text-cyan-300 text-sm"
-                            >
+                        <div className="text-right">
+                            <Link to="/admin/forgot-password" className="text-cyan-400 hover:text-cyan-300 text-sm">
                                 Forgot Password?
-                            </button>
+                            </Link>
                         </div>
 
                         {error && <p className="text-sm text-red-400">{error}</p>}
@@ -163,31 +147,9 @@ const AdminLogin = () => {
                         </button>
                     </form>
 
-                    {/* Divider */}
-
-                    <div className="flex items-center gap-4 my-6">
-                        <div className="flex-1 h-px bg-white/10" />
-
-                        <span className="text-slate-500 text-sm">
-                            OR
-                        </span>
-
-                        <div className="flex-1 h-px bg-white/10" />
-                    </div>
-
-                    {/* Social Login */}
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <button className="text-white bg-slate-900 border border-white/10 py-3 rounded-xl flex items-center justify-center gap-3 hover:border-cyan-500 transition">
-                            <FaGoogle />
-                            Google
-                        </button>
-
-                        <button className="text-white bg-slate-900 border border-white/10 py-3 rounded-xl flex items-center justify-center gap-3 hover:border-cyan-500 transition">
-                            <FaGithub />
-                            GitHub
-                        </button>
-                    </div>
+                    <p className="text-center text-sm text-slate-400 mt-5">
+                        Admin accounts sign in with their registered email and password.
+                    </p>
                 </div>
 
                 {/* Footer */}

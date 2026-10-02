@@ -68,8 +68,8 @@ export default function Contact() {
                             <span className="gradient-text block">Event Experiences</span>
                         </h2>
                         <p className="text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto">
-                            Have questions about tickets, events, partnerships, or support? Our
-                            team is here to help you anytime.
+                            Have a question about tickets, events, or partnerships? Send us a
+                            message using the form and include an email address for our reply.
                         </p>
                     </div>
                 </div>
@@ -79,82 +79,52 @@ export default function Contact() {
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10">
                     {/* ================= LEFT INFO ================= */}
                     <div className="space-y-8">
-                        {/* Card */}
                         <div className="glass rounded-3xl p-8">
                             <div className="flex items-start gap-5">
                                 <div className="w-16 h-16 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-2xl">
-                                    <i className="fa-solid fa-location-dot" />
-                                </div>
-                                <div>
-                                    <h3 className="text-2xl font-bold mb-3">Office Address</h3>
-                                    <p className="text-gray-400 leading-relaxed">
-                                        221B Event Street, Tech Business Park, Mumbai, Maharashtra,
-                                        India
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        {/* Card */}
-                        <div className="glass rounded-3xl p-8">
-                            <div className="flex items-start gap-5">
-                                <div className="w-16 h-16 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-2xl">
                                     <i className="fa-solid fa-envelope" />
                                 </div>
                                 <div>
-                                    <h3 className="text-2xl font-bold mb-3">Email Support</h3>
+                                    <h3 className="text-2xl font-bold mb-3">Customer Support</h3>
                                     <p className="text-gray-400 leading-relaxed">
-                                        support@eventhub.com
-                                        <br />
-                                        partnership@eventhub.com
+                                        Use the message form to contact EventHub support. Include your
+                                        booking or event details when they help explain your question.
                                     </p>
                                 </div>
                             </div>
                         </div>
-                        {/* Card */}
+                        <div className="glass rounded-3xl p-8">
+                            <div className="flex items-start gap-5">
+                                <div className="w-16 h-16 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-2xl">
+                                    <i className="fa-solid fa-calendar-check" />
+                                </div>
+                                <div>
+                                    <h3 className="text-2xl font-bold mb-3">Event Partnerships</h3>
+                                    <p className="text-gray-400 leading-relaxed">
+                                        For organizer or partnership questions, choose a relevant subject
+                                        in the message form and our team can follow up by email.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                         <div className="glass rounded-3xl p-8">
                             <div className="flex items-start gap-5">
                                 <div className="w-16 h-16 rounded-2xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-2xl">
-                                    <i className="fa-solid fa-phone" />
+                                    <i className="fa-solid fa-clock" />
                                 </div>
                                 <div>
-                                    <h3 className="text-2xl font-bold mb-3">Call Us</h3>
+                                    <h3 className="text-2xl font-bold mb-3">Replies</h3>
                                     <p className="text-gray-400 leading-relaxed">
-                                        +91 98765 43210
-                                        <br />
-                                        +91 98765 12345
+                                        We’ll use the email address you provide in the form to respond.
                                     </p>
                                 </div>
                             </div>
                         </div>
-                        {/* Social */}
                         <div className="glass rounded-3xl p-8">
                             <h3 className="text-2xl font-bold mb-6">Follow Us</h3>
-                            <div className="flex items-center gap-4">
-                                <a
-                                    href="#"
-                                    className="w-14 h-14 rounded-2xl glass flex items-center justify-center hover:bg-cyan-500 transition"
-                                >
-                                    <i className="fa-brands fa-facebook-f" />
-                                </a>
-                                <a
-                                    href="#"
-                                    className="w-14 h-14 rounded-2xl glass flex items-center justify-center hover:bg-pink-500 transition"
-                                >
-                                    <i className="fa-brands fa-instagram" />
-                                </a>
-                                <a
-                                    href="#"
-                                    className="w-14 h-14 rounded-2xl glass flex items-center justify-center hover:bg-sky-500 transition"
-                                >
-                                    <i className="fa-brands fa-twitter" />
-                                </a>
-                                <a
-                                    href="#"
-                                    className="w-14 h-14 rounded-2xl glass flex items-center justify-center hover:bg-purple-500 transition"
-                                >
-                                    <i className="fa-brands fa-linkedin-in" />
-                                </a>
-                            </div>
+                            <p className="text-gray-400 leading-relaxed">
+                                Official social profiles will be listed here when they’re available.
+                            </p>
                         </div>
                     </div>
                     {/* ================= CONTACT FORM ================= */}
@@ -294,7 +264,8 @@ export default function Contact() {
                                     How do I contact support?
                                 </h3>
                                 <p className="text-gray-400 leading-relaxed">
-                                    You can use the contact form or email our support team directly.
+                                    Use the contact form on this page. Include an email address so our
+                                    team can reply.
                                 </p>
                             </div>
                             <i className="fa-solid fa-plus text-pink-400 mt-2" />
