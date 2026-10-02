@@ -184,9 +184,17 @@ export async function requestPasswordReset(req, res) {
         user.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000);
         await user.save({ validateBeforeSave: false });
 
-        const appUrl = (process.env.CLIENT_URL || "https://event-management-user-qfum.onrender.com").replace(/\/$/, "");
+        const isAdmin = user.role === "admin";
+        const appUrl = (
+            isAdmin
+                ? process.env.ADMIN_CLIENT_URL || "https://event-management-admin-2fra.onrender.com"
+                : process.env.CLIENT_URL || "https://event-management-user-qfum.onrender.com"
+        ).replace(/\/$/, "");
+        const resetUrl = isAdmin
+            ? `${appUrl}/#/admin/reset-password?token=${rawToken}`
+            : `${appUrl}/reset-password?token=${rawToken}`;
         try {
-            await sendPasswordResetEmail({ to: user.email, resetUrl: `${appUrl}/reset-password?token=${rawToken}` });
+            await sendPasswordResetEmail({ to: user.email, resetUrl });
         } catch (emailError) {
             user.passwordResetToken = undefined;
             user.passwordResetExpires = undefined;

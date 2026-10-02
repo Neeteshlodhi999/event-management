@@ -13,6 +13,7 @@ import Notifications from "./pages/LiveNotifications";
 import TeamMembers from "./pages/TeamMembers";
 import AdminLogin from "./pages/AdminLogin";
 import AdminForgotPassword from "./pages/AdminForgotPassword";
+import AdminResetPassword from "./pages/AdminResetPassword";
 import Profile from "./pages/AdminProfile";
 import ContactMessages from "./pages/ContactMessages";
 import Subscribers from "./pages/Subscribers";
@@ -42,6 +43,7 @@ function App() {
       </Route>
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
+      <Route path="/admin/reset-password" element={<AdminResetPassword />} />
     </Routes>
   );
 }
