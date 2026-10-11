@@ -204,23 +204,6 @@ function Login({ navigate }) {
                         {loading ? 'Logging in...' : 'Login'}
                     </button>
                 </form>
-                {/* Divider */}
-                <div className="flex items-center gap-4 my-8">
-                    <div className="flex-1 h-px bg-white/10" />
-                    <span className="text-gray-500 text-sm">OR CONTINUE WITH</span>
-                    <div className="flex-1 h-px bg-white/10" />
-                </div>
-                {/* Social Login */}
-                <div className="grid grid-cols-2 gap-4">
-                    <button className="glass h-14 rounded-2xl hover:border-cyan-400 transition flex items-center justify-center gap-3">
-                        <i className="fa-brands fa-google text-red-400" />
-                        Google
-                    </button>
-                    <button className="glass h-14 rounded-2xl hover:border-blue-400 transition flex items-center justify-center gap-3">
-                        <i className="fa-brands fa-facebook-f text-blue-400" />
-                        Facebook
-                    </button>
-                </div>
             </div>
         </>
     )
@@ -338,23 +321,6 @@ function Register({ onRegistered }) {
                         {loading ? 'Creating account...' : 'Register Here...'}
                     </button>
                 </form>
-                {/* Divider */}
-                <div className="flex items-center gap-4 my-8">
-                    <div className="flex-1 h-px bg-white/10" />
-                    <span className="text-gray-500 text-sm">OR CONTINUE WITH</span>
-                    <div className="flex-1 h-px bg-white/10" />
-                </div>
-                {/* Social Login */}
-                <div className="grid grid-cols-2 gap-4">
-                    <button className="glass h-14 rounded-2xl hover:border-cyan-400 transition flex items-center justify-center gap-3">
-                        <i className="fa-brands fa-google text-red-400" />
-                        Google
-                    </button>
-                    <button className="glass h-14 rounded-2xl hover:border-blue-400 transition flex items-center justify-center gap-3">
-                        <i className="fa-brands fa-facebook-f text-blue-400" />
-                        Facebook
-                    </button>
-                </div>
             </div>
         </>
     )
