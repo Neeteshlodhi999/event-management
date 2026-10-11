@@ -7,7 +7,13 @@ export default function UserEvents() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [events, setEvents] = useState([]), [error, setError] = useState("");
   const [search, setSearch] = useState(""), [category, setCategory] = useState(() => searchParams.get("category") || "all"), [venue, setVenue] = useState(""), [date, setDate] = useState("");
-  useEffect(() => { fetch(`${API}/events?limit=100`).then(r => r.json()).then(j => j.status ? setEvents(j.data) : setError(j.message)).catch(() => setError("Cannot load events. Start the project server.")); }, []);
+  useEffect(() => {
+    const loadEvents = () => fetch(`${API}/events?limit=100`).then(r => r.json()).then(j => j.status ? (setEvents(j.data), setError("")) : setError(j.message)).catch(() => setError("Cannot load events. Please try again."));
+    loadEvents();
+    const refreshTimer = window.setInterval(loadEvents, 30000);
+    window.addEventListener("focus", loadEvents);
+    return () => { window.clearInterval(refreshTimer); window.removeEventListener("focus", loadEvents); };
+  }, []);
   const categories = [...new Set([...events.map(e => e.category).filter(Boolean), ...(category !== "all" ? [category] : [])])];
   const visible = useMemo(() => events.filter(e => {
     if (e.isCancel) return false;

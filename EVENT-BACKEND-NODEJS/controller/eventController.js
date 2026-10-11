@@ -48,6 +48,7 @@ export async function getEvents(req, res, next) {
         await markExpiredEvents();
 
         let events = await eventModel.find({ isExpire: false, isCancel: false })
+            .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
 
@@ -68,6 +69,7 @@ export async function getMyEvents(req, res, next) {
         await markExpiredEvents();
 
         let events = await eventModel.find({adder : req.user._id})
+            .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
 

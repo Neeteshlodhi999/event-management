@@ -9,14 +9,18 @@ export default function Home() {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        fetch(`${API_URL}/events?limit=6`)
+        const loadEvents = () => fetch(`${API_URL}/events?limit=6`)
             .then(async (response) => {
                 const result = await response.json();
                 if (!response.ok || !result.status) throw new Error(result.message || 'Unable to load events.');
                 return result.data;
             })
-            .then((data) => setEvents(data.filter((event) => !event.isCancel)))
+            .then((data) => { setEvents(data.filter((event) => !event.isCancel)); setError(''); })
             .catch(() => setError('Events are temporarily unavailable. Please try again shortly.'));
+        loadEvents();
+        const refreshTimer = window.setInterval(loadEvents, 30000);
+        window.addEventListener('focus', loadEvents);
+        return () => { window.clearInterval(refreshTimer); window.removeEventListener('focus', loadEvents); };
     }, []);
 
     const featured = events[0];
