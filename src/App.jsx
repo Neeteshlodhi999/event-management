@@ -1,4 +1,4 @@
-import { Outlet, Route, Routes } from 'react-router-dom';
+import { Outlet, Route, Routes, useSearchParams } from 'react-router-dom';
 
 // routes
 import Public from "./routers/PublicRoute";
@@ -15,6 +15,11 @@ import GalleryPage from './pages/photogallery';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 
+function HomeOrResetPassword() {
+  const [params] = useSearchParams();
+  return params.get("resetToken") ? <ResetPassword /> : <Home />;
+}
+
 // dashboard pages
 import Dashboard from './pages/dashboard/userdash';
 import Profile from './pages/dashboard/profile';
@@ -30,7 +35,7 @@ export default function App() {
 
       {/* Public Routes */}
       <Route path='/' element={<Public />}>
-        <Route index element={<Home />} />
+        <Route index element={<HomeOrResetPassword />} />
 
         <Route path='events' element={<Outlet />}>
           <Route index element={<Events />} />

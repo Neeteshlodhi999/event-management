@@ -6,7 +6,9 @@ const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 export default function ResetPassword() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
-  const token = params.get("token");
+  // Support both the original /reset-password?token= link and the root-link
+  // format used by the live static site.
+  const token = params.get("token") || params.get("resetToken");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
