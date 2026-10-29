@@ -179,26 +179,14 @@ export async function requestPasswordReset(req, res) {
         const user = await userModel.findOne({ email }).select("+passwordResetToken +passwordResetCode +passwordResetExpires");
         if (!user) return res.status(200).json(new ApiResponse(true, null, "If an account exists, a reset link has been sent."));
 
-        const rawToken = crypto.randomBytes(32).toString("hex");
         const resetCode = crypto.randomInt(100000, 1000000).toString();
-        user.passwordResetToken = crypto.createHash("sha256").update(rawToken).digest("hex");
+        user.passwordResetToken = undefined;
         user.passwordResetCode = crypto.createHash("sha256").update(resetCode).digest("hex");
         user.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000);
         await user.save({ validateBeforeSave: false });
 
-        const isAdmin = user.role === "admin";
-        const appUrl = (
-            isAdmin
-                ? process.env.ADMIN_CLIENT_URL || "https://event-management-admin-2fra.onrender.com"
-                : process.env.CLIENT_URL || "https://event-management-user-qfum.onrender.com"
-        ).replace(/\/$/, "");
-        const resetUrl = isAdmin
-            ? `${appUrl}/#/admin/reset-password?token=${rawToken}`
-            // A dedicated static entry exists at this address, so it works when
-            // opened directly from mobile email applications.
-            : `${appUrl}/reset-password?token=${rawToken}`;
         try {
-            await sendPasswordResetEmail({ to: user.email, resetUrl, resetCode });
+            await sendPasswordResetEmail({ to: user.email, resetCode });
         } catch (emailError) {
             user.passwordResetToken = undefined;
             user.passwordResetCode = undefined;
