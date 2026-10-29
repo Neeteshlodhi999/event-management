@@ -19,6 +19,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
+        auth: resolve(__dirname, 'auth/index.html'),
         resetPassword: resolve(__dirname, 'reset-password/index.html'),
       },
     },
