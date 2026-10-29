@@ -11,6 +11,7 @@ import {
     FaEnvelope,
     FaAddressBook,
     FaQrcode,
+    FaStar,
     FaSignOutAlt
 } from "react-icons/fa";
 
@@ -46,6 +47,11 @@ const menus = [
         title: "Check-in",
         icon: <FaQrcode />,
         path: "/check-in",
+    },
+    {
+        title: "Reviews",
+        icon: <FaStar />,
+        path: "/reviews",
     },
     {
         title: "Revenue",

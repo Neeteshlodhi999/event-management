@@ -14,6 +14,7 @@ import savedEventsRouter from "./routes/savedEvents.js"
 import notificationsRouter from "./routes/notifications.js"
 import contactRouter from "./routes/contact.js"
 import subscribersRouter from "./routes/subscribers.js"
+import reviewsRouter from "./routes/reviews.js"
 
 const app = express();
 const defaultOrigins = [
@@ -59,6 +60,7 @@ app.use('/saved-events', savedEventsRouter);
 app.use('/notifications', notificationsRouter);
 app.use('/contact-messages', contactRouter);
 app.use('/subscribers', subscribersRouter);
+app.use('/reviews', reviewsRouter);
 
 // for static image send
 app.use("/uploads",express.static('uploads'));
