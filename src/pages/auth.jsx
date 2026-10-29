@@ -1,12 +1,44 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function Auth() {
     // New visitors need an account first, so registration is the default tab.
     const [loginPage, setLoginPage] = useState(false);
+    const [params] = useSearchParams();
     const navigate = useNavigate();
+    const [googleError, setGoogleError] = useState('');
+
+    useEffect(() => {
+        const exchangeCode = params.get('google_code');
+        const returnedError = params.get('google_error');
+        if (returnedError) {
+            setLoginPage(true);
+            setGoogleError(returnedError);
+            window.history.replaceState({}, '', '/auth');
+            return;
+        }
+        if (!exchangeCode) return;
+
+        setLoginPage(true);
+        fetch(`${API_URL}/auth/google/exchange`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: exchangeCode }),
+        })
+            .then(async (response) => ({ response, result: await response.json() }))
+            .then(({ response, result }) => {
+                if (!response.ok || !result.status || !result.data?.accessToken) throw new Error(result.message || 'Unable to complete Google sign-in.');
+                localStorage.setItem('accessToken', result.data.accessToken);
+                localStorage.setItem('user', JSON.stringify(result.data));
+                navigate('/dashboard', { replace: true });
+            })
+            .catch((error) => {
+                setGoogleError(error.message || 'Unable to complete Google sign-in.');
+                window.history.replaceState({}, '', '/auth');
+            });
+    }, [navigate, params]);
     return (
         <>
             {/* login section */}
@@ -88,7 +120,7 @@ export default function Auth() {
                             </div>
                         </div>
                         {/* Login Form */}
-                        {loginPage ? <Login navigate={navigate} />
+                        {loginPage ? <Login navigate={navigate} googleError={googleError} />
                             : <Register onRegistered={() => setLoginPage(true)} />}
                     </div>
                 </div>
@@ -98,7 +130,7 @@ export default function Auth() {
 }
 
 
-function Login({ navigate }) {
+function Login({ navigate, googleError }) {
     const [form, setForm] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -204,6 +236,12 @@ function Login({ navigate }) {
                         {loading ? 'Logging in...' : 'Login'}
                     </button>
                 </form>
+                <div className="flex items-center gap-3 my-6 text-xs text-gray-500"><span className="h-px flex-1 bg-white/10" />OR<span className="h-px flex-1 bg-white/10" /></div>
+                <button type="button" onClick={() => { window.location.assign(`${API_URL}/auth/google`); }} className="w-full h-14 rounded-2xl border border-white/15 bg-white text-slate-800 hover:bg-slate-100 transition font-bold flex items-center justify-center gap-3">
+                    <span className="text-lg font-black text-red-500">G</span>
+                    Continue with Google
+                </button>
+                {googleError && <p className="mt-4 text-sm text-red-400">{googleError}</p>}
             </div>
         </>
     )
