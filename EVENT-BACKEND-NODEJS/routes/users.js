@@ -10,7 +10,8 @@ import {
   updateMyProfile,
   updateProfilePhoto,
   requestPasswordReset,
-  resetPassword
+  resetPassword,
+  resetPasswordWithCode
 } from '../controller/userController.js';
 
 import { authMiddleware } from '../middleware/authMiddleware.js';
@@ -38,6 +39,7 @@ router.patch('/profile/photo', authMiddleware, roleMiddleware("admin", "user"), 
 router.post('/', registerUser);
 router.post('/forgot-password', passwordResetLimiter, requestPasswordReset);
 router.post('/reset-password/:token', passwordResetLimiter, resetPassword);
+router.post('/reset-password-code', passwordResetLimiter, resetPasswordWithCode);
 
 /* UPDATE user */
 router.patch('/:userId', authMiddleware, roleMiddleware("admin"), updateUser);

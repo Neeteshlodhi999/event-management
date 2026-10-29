@@ -47,6 +47,14 @@ const userSchema = new Schema({
         type: Date,
         select: false
     },
+    passwordResetCode: {
+        type: String,
+        select: false
+    },
+    passwordResetCode: {
+        type: String,
+        select: false
+    },
     role: {
         type: String,
         enum: ["user", "admin"],
