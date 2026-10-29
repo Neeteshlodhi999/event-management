@@ -192,10 +192,9 @@ export async function requestPasswordReset(req, res) {
         ).replace(/\/$/, "");
         const resetUrl = isAdmin
             ? `${appUrl}/#/admin/reset-password?token=${rawToken}`
-            // Keep the user reset link on the site root.  Email clients sometimes
-            // open a deep link as a fresh page request, which can bypass SPA
-            // rewrite rules on static hosts.
-            : `${appUrl}/?resetToken=${rawToken}`;
+            // A dedicated static entry exists at this address, so it works when
+            // opened directly from mobile email applications.
+            : `${appUrl}/reset-password?token=${rawToken}`;
         try {
             await sendPasswordResetEmail({ to: user.email, resetUrl });
         } catch (emailError) {
