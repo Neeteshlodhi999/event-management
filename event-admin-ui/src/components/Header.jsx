@@ -14,7 +14,7 @@ export default function Header() {
   return (
     <header className="border-b border-white/10 bg-slate-900/50 backdrop-blur-xl">
 
-      <div className="px-6 py-4 flex justify-between items-center">
+      <div className="px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center gap-3">
 
         <div className="relative">
 
@@ -22,12 +22,12 @@ export default function Header() {
 
           <input
             placeholder="Search events..."
-            className="bg-slate-800 rounded-xl pl-12 pr-5 py-3 outline-none w-80"
+            className="bg-slate-800 rounded-xl pl-12 pr-5 py-3 outline-none w-full sm:w-80"
           />
 
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
 
           <button className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center">
             <FaBell />

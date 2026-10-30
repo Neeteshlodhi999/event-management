@@ -98,8 +98,8 @@ export default function Sidebar() {
         navigate("/admin/login");
     };
     return (
-        <aside className="w-72 bg-slate-900 border-r border-white/10">
-            <div className="p-6 border-b border-white/10">
+        <aside className="w-full md:w-72 md:shrink-0 bg-slate-900 border-b md:border-b-0 md:border-r border-white/10">
+            <div className="p-4 md:p-6 border-b border-white/10">
 
                 <h1 className="text-3xl font-black">
                     Event<span className="text-cyan-400">Hub</span>
@@ -111,14 +111,14 @@ export default function Sidebar() {
 
             </div>
 
-            <nav className="p-5 space-y-2">
+            <nav className="p-3 md:p-5 flex md:block gap-2 md:space-y-2 overflow-x-auto">
 
                 {menus.map((menu) => (
                     <NavLink
                         key={menu.title}
                         to={menu.path}
                         className={({ isActive }) =>
-                            `flex items-center gap-4 px-5 py-4 rounded-2xl transition ${isActive
+                            `shrink-0 flex items-center gap-3 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-2xl transition ${isActive
                                 ? "bg-cyan-500"
                                 : "hover:bg-white/5"
                             }`
@@ -129,7 +129,7 @@ export default function Sidebar() {
                     </NavLink>
                 ))}
 
-                <button onClick={logout} className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-red-300 hover:bg-red-500/10 transition">
+                <button onClick={logout} className="shrink-0 flex items-center gap-3 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-2xl text-red-300 hover:bg-red-500/10 transition">
                     <FaSignOutAlt />
                     Logout
                 </button>

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { FaChevronDown, FaSignOutAlt, FaTicketAlt, FaUser } from 'react-icons/fa';
+import { FaBars, FaChevronDown, FaSignOutAlt, FaTicketAlt, FaTimes, FaUser } from 'react-icons/fa';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 
 export default function Header() {
     const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('user') || '{}'));
     const [menuOpen, setMenuOpen] = useState(false);
+    const [mobileNavOpen, setMobileNavOpen] = useState(false);
     const navigate = useNavigate();
     const isLoggedIn = Boolean(localStorage.getItem('accessToken'));
 
@@ -29,7 +30,7 @@ export default function Header() {
     return (
         <>
             <header className="fixed top-0 left-0 w-full z-50 glass border-b border-white/10">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
 
                     <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-2xl bg-cyan-500 flex items-center justify-center shadow-lg shadow-cyan-500/30">
@@ -56,7 +57,10 @@ export default function Header() {
                         </NavLink>
                     </nav>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        <button aria-label="Open navigation" onClick={() => setMobileNavOpen(!mobileNavOpen)} className="md:hidden w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                            {mobileNavOpen ? <FaTimes /> : <FaBars />}
+                        </button>
                         {isLoggedIn ? <div className="relative">
                             <button onClick={() => setMenuOpen(!menuOpen)} className="flex items-center gap-2 bg-slate-900/80 hover:bg-slate-800 border border-white/10 px-3 py-2 rounded-xl transition">
                                 {user.image ? <img src={user.image} alt="Profile" className="w-8 h-8 rounded-full object-cover" /> : <span className="w-8 h-8 rounded-full bg-cyan-500/20 text-cyan-300 flex items-center justify-center"><FaUser /></span>}
@@ -71,6 +75,12 @@ export default function Header() {
                         </div> : <Link to="/auth" className="bg-cyan-500 hover:bg-cyan-400 transition px-7 py-2 rounded-xl font-semibold shadow-lg shadow-cyan-500/30">Login</Link>}
                     </div>
                 </div>
+                {mobileNavOpen && <nav className="md:hidden border-t border-white/10 px-4 py-3 grid grid-cols-2 gap-2 text-sm text-gray-200">
+                    <NavLink onClick={() => setMobileNavOpen(false)} to="/" className="rounded-xl px-4 py-3 hover:bg-white/5">Home</NavLink>
+                    <NavLink onClick={() => setMobileNavOpen(false)} to="/events" className="rounded-xl px-4 py-3 hover:bg-white/5">Events</NavLink>
+                    <NavLink onClick={() => setMobileNavOpen(false)} to="/photo-gallery" className="rounded-xl px-4 py-3 hover:bg-white/5">Gallery</NavLink>
+                    <NavLink onClick={() => setMobileNavOpen(false)} to="/contact" className="rounded-xl px-4 py-3 hover:bg-white/5">Contact</NavLink>
+                </nav>}
             </header>
         </>
     );

@@ -10,6 +10,14 @@ body {
     overflow-x: hidden;
 }
 
+button, a, input, select, textarea {
+    -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 640px) {
+    .event-card:hover { transform: none; }
+}
+
 input,
 textarea,
 select {
