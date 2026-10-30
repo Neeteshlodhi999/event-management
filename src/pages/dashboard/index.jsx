@@ -56,7 +56,7 @@ const Dashboard = ({ children }) => {
                 />
             )}
 
-            <aside className={`fixed lg:static top-0 left-0 h-screen w-72 bg-slate-900 border-r border-white/10 z-50 transform transition-all duration-300 ease-in-out
+            <aside style={{ backgroundColor: "#020617" }} className={`fixed lg:static top-0 left-0 h-screen w-[86vw] max-w-72 lg:w-72 border-r border-white/10 shadow-2xl shadow-black/60 z-50 transform transition-all duration-300 ease-in-out overflow-y-auto
                               ${sidebarOpen
                     ? "translate-x-0"
                     : "-translate-x-full lg:translate-x-0"}`}
@@ -87,6 +87,7 @@ const Dashboard = ({ children }) => {
                         <NavLink
                             to={link}
                             key={index}
+                            onClick={() => setSidebarOpen(false)}
                             className={({ isActive }) => `w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition ${isActive
                                 ? "bg-cyan-500 text-white"
                                 : "hover:bg-white/5 text-slate-300"
@@ -118,7 +119,7 @@ const Dashboard = ({ children }) => {
 
                 <header className="border-b border-white/10 backdrop-blur-xl bg-slate-950/80 sticky top-0 z-20">
 
-                    <div className="px-8 py-3.5 flex justify-between items-center">
+                    <div className="px-4 sm:px-8 py-3.5 flex justify-between items-center gap-3">
 
                         <div className="flex items-center gap-4">
 
@@ -133,33 +134,33 @@ const Dashboard = ({ children }) => {
 
                             <div>
 
-                                <h2 className="text-3xl font-black">
+                                <h2 className="text-xl sm:text-3xl font-black leading-tight">
                                     Welcome back{user.name ? `, ${user.name}` : ''} 👋
                                 </h2>
 
-                                <p className="text-slate-400 mt-1">
+                                <p className="text-slate-400 mt-1 text-sm sm:text-base">
                                     Manage your events and tickets
                                 </p>
 
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
 
-                            <button className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                            <button className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
                                 <FaBell />
                             </button>
 
                             {user.image
-                                ? <img src={user.image} alt="Profile" className="w-12 h-12 rounded-full object-cover" />
-                                : <div className="w-12 h-12 rounded-full bg-slate-900 border border-white/10 text-cyan-400 flex items-center justify-center"><FaUser /></div>}
+                                ? <img src={user.image} alt="Profile" className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover" />
+                                : <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-900 border border-white/10 text-cyan-400 flex items-center justify-center"><FaUser /></div>}
 
                         </div>
 
                     </div>
 
                 </header>
-                <div className="p-8">
+                <div className="p-4 sm:p-8">
                     {children}
                 </div>
             </main>
