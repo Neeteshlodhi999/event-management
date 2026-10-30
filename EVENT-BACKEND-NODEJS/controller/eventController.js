@@ -4,6 +4,7 @@ import notificationModel from "../models/notificationModel.js";
 import { ApiResponse } from "../utils/responsePattern.js";
 import fs from "fs";
 import { uploadImage } from "../config/cloudinary.js";
+import { sendEventCancellationEmail } from "../config/mailer.js";
 
 function todayInIndia() {
     const parts = new Intl.DateTimeFormat("en-CA", {
@@ -245,7 +246,8 @@ export async function cancelEvent(req, res, next) {
         );
 
         if (cancelEvent) {
-            const bookings = await bookingModel.find({ event: eventId, isCancel: false }).select("attendee");
+            const bookings = await bookingModel.find({ event: eventId, isCancel: false })
+                .populate("attendee", "name email");
             if (bookings.length) {
                 try {
                     await notificationModel.insertMany(bookings.map((booking) => ({
@@ -256,6 +258,17 @@ export async function cancelEvent(req, res, next) {
                     })));
                 } catch (notificationError) {
                     console.error("Event cancellation notifications failed:", notificationError.message);
+                }
+                const emailResults = await Promise.allSettled(bookings.map((booking) =>
+                    sendEventCancellationEmail({
+                        to: booking.attendee?.email,
+                        name: booking.attendee?.name || "EventHub attendee",
+                        event: cancelEvent
+                    })
+                ));
+                const emailFailures = emailResults.filter((result) => result.status === "rejected");
+                if (emailFailures.length) {
+                    console.error(`Event cancellation emails failed for ${emailFailures.length} attendee(s):`, emailFailures[0].reason?.message);
                 }
             }
             return res.status(200).json(new ApiResponse(true, cancelEvent, "Event cancelled and attendees notified"));

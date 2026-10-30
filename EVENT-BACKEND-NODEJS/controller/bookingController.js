@@ -2,6 +2,7 @@ import bookingModel from "../models/bookingModel.js";
 import eventModel from "../models/eventModel.js";
 import { ApiResponse } from "../utils/responsePattern.js";
 import notificationModel from "../models/notificationModel.js";
+import { sendBookingConfirmationEmail } from "../config/mailer.js";
 
 const ticketFields = {
     general: { total: "total_general_tickets", sold: "sold_general_tickets" },
@@ -143,6 +144,16 @@ export async function bookTicket(req, res, next) {
             ]);
         } catch (notificationError) {
             console.error("Booking notification failed:", notificationError.message);
+        }
+        try {
+            await sendBookingConfirmationEmail({
+                to: req.user.email,
+                name: req.user.name,
+                event: eventDetail,
+                booking: ticket
+            });
+        } catch (emailError) {
+            console.error("Booking confirmation email failed:", emailError.message);
         }
 
         return res.status(201).json(new ApiResponse(true, ticket, "ticket booked success"))
