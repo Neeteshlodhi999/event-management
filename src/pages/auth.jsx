@@ -32,7 +32,7 @@ export default function Auth() {
                 if (!response.ok || !result.status || !result.data?.accessToken) throw new Error(result.message || 'Unable to complete Google sign-in.');
                 localStorage.setItem('accessToken', result.data.accessToken);
                 localStorage.setItem('user', JSON.stringify(result.data));
-                navigate('/dashboard', { replace: true });
+                navigate('/', { replace: true });
             })
             .catch((error) => {
                 setGoogleError(error.message || 'Unable to complete Google sign-in.');
@@ -155,7 +155,7 @@ function Login({ navigate, googleError }) {
 
             localStorage.setItem('accessToken', result.data.accessToken);
             localStorage.setItem('user', JSON.stringify(result.data));
-            navigate('/dashboard');
+            navigate('/');
         } catch (err) {
             setError(err.message === 'Failed to fetch'
                 ? 'Server is not running. Start the project with: npm run start:project'
