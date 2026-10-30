@@ -5,6 +5,7 @@ import {
   getUsers, 
   registerUser, 
   updateUser, 
+  setUserStatus,
   changePassword,
   getMyProfile,
   updateMyProfile,
@@ -43,6 +44,7 @@ router.post('/reset-password-code', passwordResetLimiter, resetPasswordWithCode)
 
 /* UPDATE user */
 router.patch('/:userId', authMiddleware, roleMiddleware("admin"), updateUser);
+router.patch('/:userId/status', authMiddleware, roleMiddleware("admin"), setUserStatus);
 
 /* DELETE user */
 router.delete('/:userId', authMiddleware, roleMiddleware("admin"), deleteUser);

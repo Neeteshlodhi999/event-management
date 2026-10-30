@@ -93,6 +93,30 @@ export async function deleteUser(req, res, next) {
     }
 }
 
+export async function setUserStatus(req, res) {
+    try {
+        const { userId } = req.params;
+        const { isSuspended } = req.body;
+        if (typeof isSuspended !== "boolean") {
+            return res.status(400).json(new ApiResponse(false, null, "Suspension status is required"));
+        }
+        if (String(userId) === String(req.user._id)) {
+            return res.status(400).json(new ApiResponse(false, null, "You cannot suspend your own administrator account"));
+        }
+
+        const user = await userModel.findOneAndUpdate(
+            { _id: userId, role: "user", isDeleted: { $ne: true } },
+            { isSuspended },
+            { new: true, runValidators: true }
+        ).select("-password -passwordResetToken -passwordResetExpires -passwordResetCode -__v");
+        if (!user) return res.status(404).json(new ApiResponse(false, null, "User not found or cannot be managed"));
+
+        return res.status(200).json(new ApiResponse(true, user, isSuspended ? "User suspended" : "User reactivated"));
+    } catch (error) {
+        return res.status(500).json(new ApiResponse(false, null, error.message || "Unable to update user status"));
+    }
+}
+
 // change password
 export async function changePassword(req, res, next) {
     try {

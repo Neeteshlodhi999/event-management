@@ -16,7 +16,7 @@ export async function authMiddleware(req, res, next) {
 
         let user = await userModel.findById(tokenData.id);
 
-        if (!user || user.isDeleted) return res.status(401).json(new ApiResponse(false, null, "user Not found or Deleted"));
+        if (!user || user.isDeleted || user.isSuspended) return res.status(401).json(new ApiResponse(false, null, "User is unavailable or suspended"));
 
         user = user.toObject();
 

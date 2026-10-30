@@ -36,6 +36,7 @@ export async function authController(req, res) {
         let user = await userModel.findOne({ email: normalizedEmail });
 
         if (!user) return res.status(404).json(new ApiResponse(false, null, "No account found with this email. Please register first."))
+        if (user.isSuspended) return res.status(403).json(new ApiResponse(false, null, "This account has been suspended. Please contact EventHub support."));
 
         let match = await verifyHash(password, user.password);
 
@@ -121,6 +122,7 @@ export async function completeGoogleLogin(req, res) {
 
         let user = await userModel.findOne({ email });
         if (user?.role === "admin") return redirectWithGoogleError(res, "Please use the admin login page.");
+        if (user?.isSuspended) return redirectWithGoogleError(res, "This account has been suspended. Please contact EventHub support.");
         if (!user) {
             user = await userModel.create({
                 name: safeGoogleName(profile.name, email),
