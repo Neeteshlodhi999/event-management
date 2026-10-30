@@ -75,11 +75,11 @@ export default function Header() {
                         </div> : <Link to="/auth" className="bg-cyan-500 hover:bg-cyan-400 transition px-7 py-2 rounded-xl font-semibold shadow-lg shadow-cyan-500/30">Login</Link>}
                     </div>
                 </div>
-                {mobileNavOpen && <nav className="md:hidden border-t border-white/10 px-4 py-3 grid grid-cols-2 gap-2 text-sm text-gray-200">
-                    <NavLink onClick={() => setMobileNavOpen(false)} to="/" className="rounded-xl px-4 py-3 hover:bg-white/5">Home</NavLink>
-                    <NavLink onClick={() => setMobileNavOpen(false)} to="/events" className="rounded-xl px-4 py-3 hover:bg-white/5">Events</NavLink>
-                    <NavLink onClick={() => setMobileNavOpen(false)} to="/photo-gallery" className="rounded-xl px-4 py-3 hover:bg-white/5">Gallery</NavLink>
-                    <NavLink onClick={() => setMobileNavOpen(false)} to="/contact" className="rounded-xl px-4 py-3 hover:bg-white/5">Contact</NavLink>
+                {mobileNavOpen && <nav className="md:hidden relative z-50 bg-slate-950 border-t border-white/10 px-4 py-4 grid grid-cols-2 gap-3 text-base text-white shadow-2xl">
+                    <NavLink onClick={() => setMobileNavOpen(false)} to="/" className="rounded-xl px-4 py-3 bg-slate-900 hover:bg-cyan-500 transition">Home</NavLink>
+                    <NavLink onClick={() => setMobileNavOpen(false)} to="/events" className="rounded-xl px-4 py-3 bg-slate-900 hover:bg-cyan-500 transition">Events</NavLink>
+                    <NavLink onClick={() => setMobileNavOpen(false)} to="/photo-gallery" className="rounded-xl px-4 py-3 bg-slate-900 hover:bg-cyan-500 transition">Gallery</NavLink>
+                    <NavLink onClick={() => setMobileNavOpen(false)} to="/contact" className="rounded-xl px-4 py-3 bg-slate-900 hover:bg-cyan-500 transition">Contact</NavLink>
                 </nav>}
             </header>
         </>
